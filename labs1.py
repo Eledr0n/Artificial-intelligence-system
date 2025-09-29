@@ -6,15 +6,15 @@ import pandas as pd
 from sklearn import preprocessing
 from sklearn.preprocessing import OneHotEncoder
 
-pd.set_option('display.width', 400)
+pd.set_option('display.width', 200)
 pd.set_option('display.max_columns', 10)
 
-# 2. Загрузить датасет в pandas DataFrame и вывести на экран
+# Загрузить датасет в pandas DataFrame и вывести на экран
 df = pd.read_csv("cars_data.csv", encoding='windows-1251', sep=';')
 print(df.head())
 
-# 3. Кодирование категориальных признаков 'Класс' и 'Страна производства'
-columns_to_encode = ['Класс', 'Страна производства']
+# Кодирование признаков 'Класс' и 'Страна-производитель'
+columns_to_encode = ['Класс', 'Страна-производитель']
 encoder = OneHotEncoder(sparse_output=False, dtype=np.float64)
 encoded_data = encoder.fit_transform(df[columns_to_encode])
 
@@ -22,19 +22,15 @@ encoded_data = encoder.fit_transform(df[columns_to_encode])
 new_subcolumns_names = encoder.get_feature_names_out(columns_to_encode)
 encoded_df = pd.DataFrame(encoded_data, columns=new_subcolumns_names, index=df.index)
 
-# Удаляем исходные столбцы
 df.drop(columns_to_encode, axis=1, inplace=True)
-
-# Добавляем новые закодированные столбцы
 df = pd.concat([df, encoded_df], axis=1)
 print("\nДанные после кодирования:")
 print(df.head())
 
-# Преобразуем целевой признак 'Купили' в числовой (если нужно)
-if df['Купили'].dtype == object:
-    df['Купили'] = df['Купили'].map({'нет': 0, 'да': 1})
+# if df['Купили'].dtype == object:
+#     df['Купили'] = df['Купили'].map({'нет': 0, 'да': 1})
 
-# 4. Определить среднее значение, медиану, моду и стандартное отклонение для числовых признаков
+# Среднее значение, медиана, мода и стандартное отклонение
 numeric_cols = ['Цена', 'Пробег']
 
 print(f"\n....Среднее значение----------------------------")
@@ -66,7 +62,7 @@ print(cov)
 print("\n....Корреляция----------------------------")
 print(cor)
 
-# 6. Визуализация данных
+# 6. Визуализация
 sns.pairplot(df, vars=numeric_cols, hue='Купили')
 plt.show()
 
@@ -75,9 +71,11 @@ sns.heatmap(cor, annot=True, fmt='.2f', cmap='coolwarm', square=True, cbar_kws={
 plt.title('Тепловая карта корреляции')
 plt.show()
 
-# 7. Нормализация числовых признаков
+# 7. Нормализация числовых признаков - ИСПРАВЛЕННАЯ ВЕРСИЯ
 scaler = preprocessing.MinMaxScaler()
-scaled_data = scaler.fit_transform(df[numeric_cols])
-scaled_df = pd.DataFrame(scaled_data, columns=numeric_cols)
+
+# Сохраняем нормализованные данные обратно в основной DataFrame
+df[numeric_cols] = scaler.fit_transform(df[numeric_cols])
+
 print('\n----------------------------Нормированные данные----------------------------')
-print(scaled_df.head())
+print(df[numeric_cols].head())

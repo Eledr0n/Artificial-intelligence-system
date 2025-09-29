@@ -4,16 +4,16 @@ import seaborn as sns
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
-# Шаг 1: Загрузка данных
+# Загрузка данных
 data = pd.read_csv('cars_data.csv', encoding='windows-1251', sep=';')
 
-# Шаг 2: Предобработка признаков
+# Предобработка признаков
 # Выбираем нужные признаки и целевую переменную
-features = data[['Цена', 'Класс', 'Пробег', 'Страна производства']]
+features = data[['Цена', 'Класс', 'Пробег', 'Страна-производитель']]
 target = data['Купили'].astype(int)  # Целевая переменная 0/1
 
 # Кодируем категориальные признаки с помощью one-hot encoding
-features_encoded = pd.get_dummies(features, columns=['Класс', 'Страна производства'], drop_first=True)
+features_encoded = pd.get_dummies(features, columns=['Класс', 'Страна-производитель'], drop_first=True)
 
 # Шаг 3: Нормализация числовых признаков
 num_cols = ['Цена', 'Пробег']
