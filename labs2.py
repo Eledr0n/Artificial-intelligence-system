@@ -7,20 +7,19 @@ from sklearn.preprocessing import StandardScaler
 # Загрузка данных
 data = pd.read_csv('cars_data.csv', encoding='windows-1251', sep=';')
 
-# Предобработка признаков
 # Выбираем нужные признаки и целевую переменную
 features = data[['Цена', 'Класс', 'Пробег', 'Страна-производитель']]
-target = data['Купили'].astype(int)  # Целевая переменная 0/1
+target = data['Купили'].astype(int)
 
 # Кодируем категориальные признаки с помощью one-hot encoding
 features_encoded = pd.get_dummies(features, columns=['Класс', 'Страна-производитель'], drop_first=True)
 
-# Шаг 3: Нормализация числовых признаков
+# Нормализация числовых признаков
 num_cols = ['Цена', 'Пробег']
 scaler = StandardScaler()
 features_encoded[num_cols] = scaler.fit_transform(features_encoded[num_cols])
 
-# Шаг 4: PCA — определение количества компонент
+# PCA — определение количества компонент
 pca = PCA()
 pca.fit(features_encoded)
 
@@ -40,12 +39,12 @@ plt.axvline(x=2, color='g', linestyle='--')
 plt.grid()
 plt.show()
 
-# Шаг 5: Снижение размерности до 2 компонент
+# Снижение размерности до 2 компонент
 pca = PCA(n_components=2)
 X_pca_reduced = pca.fit_transform(features_encoded)
 print("Доля дисперсии для 2 компонент:", pca.explained_variance_ratio_)
 
-# Шаг 6: Визуализация результатов
+# Визуализация результатов
 pca_df = pd.DataFrame(X_pca_reduced, columns=['Principal Component 1', 'Principal Component 2'])
 pca_df['Купили'] = target.astype(str)
 pca_df['Купили'] = pca_df['Купили'].map({'0': 'Нет', '1': 'Да'})

@@ -14,19 +14,19 @@ from sklearn.metrics import confusion_matrix, accuracy_score, classification_rep
 data = pd.read_csv('cars_data.csv', encoding='windows-1251', sep=';')
 
 # Проверка на наличие необходимых столбцов
-required_cols = ['Цена', 'Класс', 'Пробег', 'Страна производства', 'Купили']
+required_cols = ['Цена', 'Класс', 'Пробег', 'Страна-производитель', 'Купили']
 if not all(col in data.columns for col in required_cols):
     raise ValueError(f"Файл должен содержать столбцы: {required_cols}")
 
 print("Проверка на NaN значения:\n", data.isnull().sum())
 
 # Разделение данных на признаки и метки
-features = data[['Цена', 'Класс', 'Пробег', 'Страна производства']]
+features = data[['Цена', 'Класс', 'Пробег', 'Страна-производитель']]
 labels = data['Купили']
 
 # Обработка признаков: числовые - масштабирование, категориальные - OneHotEncoding
 numeric_features = ['Цена', 'Пробег']
-categorical_features = ['Класс', 'Страна производства']
+categorical_features = ['Класс', 'Страна-производитель']
 
 preprocessor = ColumnTransformer(
     transformers=[

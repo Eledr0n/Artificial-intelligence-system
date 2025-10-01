@@ -6,14 +6,14 @@ import pandas as pd
 from sklearn import preprocessing
 from sklearn.preprocessing import OneHotEncoder
 
-pd.set_option('display.width', 200)
-pd.set_option('display.max_columns', 10)
+pd.set_option('display.width', 250)
+pd.set_option('display.max_columns', 11)
 
 # Загрузить датасет в pandas DataFrame и вывести на экран
 df = pd.read_csv("cars_data.csv", encoding='windows-1251', sep=';')
 print(df.head())
 
-# Кодирование признаков 'Класс' и 'Страна-производитель'
+# Кодирование категориальных признаков 'Класс' и 'Страна-производитель'
 columns_to_encode = ['Класс', 'Страна-производитель']
 encoder = OneHotEncoder(sparse_output=False, dtype=np.float64)
 encoded_data = encoder.fit_transform(df[columns_to_encode])
