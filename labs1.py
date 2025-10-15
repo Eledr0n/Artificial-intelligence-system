@@ -9,7 +9,7 @@ from sklearn.preprocessing import OneHotEncoder
 pd.set_option('display.width', 250)
 pd.set_option('display.max_columns', 11)
 
-# Загрузить датасет в pandas DataFrame и вывести на экран
+# Загрузить датасет в DataFrame и вывести на экран
 df = pd.read_csv("cars_data.csv", encoding='windows-1251', sep=';')
 print(df.head())
 
@@ -57,9 +57,9 @@ corr_cols = numeric_cols + ['Купили']
 cov = df[corr_cols].cov()
 cor = df[corr_cols].corr()
 
-print("\n....Ковариация----------------------------")
+print("\n-----Ковариация----------------------------")
 print(cov)
-print("\n....Корреляция----------------------------")
+print("\n-----Корреляция----------------------------")
 print(cor)
 
 # 6. Визуализация

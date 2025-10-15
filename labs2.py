@@ -4,30 +4,42 @@ import seaborn as sns
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
+pd.set_option('display.width', 250)
+pd.set_option('display.max_columns', 11)
+
 # Загрузка данных
 data = pd.read_csv('cars_data.csv', encoding='windows-1251', sep=';')
 
 # Выбираем нужные признаки и целевую переменную
-features = data[['Цена', 'Класс', 'Пробег', 'Страна-производитель']]
 target = data['Купили'].astype(int)
+features = data[['Цена', 'Класс', 'Пробег', 'Страна-производитель']]
 
 # Кодируем категориальные признаки с помощью one-hot encoding
 features_encoded = pd.get_dummies(features, columns=['Класс', 'Страна-производитель'], drop_first=True)
+# print(features_encoded.head())
 
 # Нормализация числовых признаков
 num_cols = ['Цена', 'Пробег']
 scaler = StandardScaler()
 features_encoded[num_cols] = scaler.fit_transform(features_encoded[num_cols])
+# print(features_encoded[num_cols].head())
 
 # PCA — определение количества компонент
 pca = PCA()
 pca.fit(features_encoded)
+# print(features_encoded)
 
 explained_variance = pca.explained_variance_ratio_
 cumulative_variance = explained_variance.cumsum()
 
 print("Дисперсия для каждой главной компоненты:", explained_variance)
 print("Кумулятивная дисперсия:", cumulative_variance)
+
+# Снижение размерности до 2 компонент
+pca = PCA(n_components=2)
+X_pca_reduced = pca.fit_transform(features_encoded)
+# print('\n', X_pca_reduced)
+print("Доля дисперсии для 2 компонент:", pca.explained_variance_ratio_)
 
 plt.figure(figsize=(8, 5))
 plt.plot(range(1, len(explained_variance) + 1), cumulative_variance, marker='o')
@@ -39,17 +51,12 @@ plt.axvline(x=2, color='g', linestyle='--')
 plt.grid()
 plt.show()
 
-# Снижение размерности до 2 компонент
-pca = PCA(n_components=2)
-X_pca_reduced = pca.fit_transform(features_encoded)
-print("Доля дисперсии для 2 компонент:", pca.explained_variance_ratio_)
-
 # Визуализация результатов
 pca_df = pd.DataFrame(X_pca_reduced, columns=['Principal Component 1', 'Principal Component 2'])
 pca_df['Купили'] = target.astype(str)
 pca_df['Купили'] = pca_df['Купили'].map({'0': 'Нет', '1': 'Да'})
 
-plt.figure(figsize=(10, 10))
+plt.figure(figsize=(8, 8))
 sns.scatterplot(data=pca_df, x='Principal Component 1', y='Principal Component 2',
                 hue='Купили', palette={'Нет': 'red', 'Да': 'blue'}, alpha=0.7)
 plt.title('PCA: 2 главные компоненты')
